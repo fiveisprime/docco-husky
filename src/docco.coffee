@@ -1,4 +1,5 @@
-# > *forked from the origina [Docco](https://github.com/jashkenas/docco) project, updated with abandon*
+# > *forked from the origina [Docco](https://github.com/jashkenas/docco)
+# project, updated with abandon*
 #
 # **Docco** is a quick-and-dirty, hundred-line-long, literate-programming-style
 # documentation generator. It produces HTML
@@ -11,11 +12,11 @@
 #
 #     docco src/*.coffee
 #
-# ...will generate an HTML documentation page for each of the named source files, 
-# with a menu linking to the other pages, saving it into a `docs` folder.
+# ...will generate an HTML documentation page for each of the named source
+# files, with a menu linking to the other pages, saving it into a `docs` folder.
 #
-# The [source for Docco](http://github.com/jashkenas/docco) is available on GitHub,
-# and released under the MIT license.
+# The [source for Docco](http://github.com/jashkenas/docco) is available on
+# GitHub, and released under the MIT license.
 #
 # To install Docco, first make sure you have [Node.js](http://nodejs.org/),
 # [Pygments](http://pygments.org/) (install the latest dev version of Pygments
@@ -29,27 +30,29 @@
 #
 #### Partners in Crime:
 #
-# * If **Node.js** doesn't run on your platform, or you'd prefer a more 
-# convenient package, get [Ryan Tomayko](http://github.com/rtomayko)'s 
-# [Rocco](http://rtomayko.github.com/rocco/rocco.html), the Ruby port that's 
-# available as a gem. 
-# 
+# * If **Node.js** doesn't run on your platform, or you'd prefer a more
+# convenient package, get [Ryan Tomayko](http://github.com/rtomayko)'s
+# [Rocco](http://rtomayko.github.com/rocco/rocco.html), the Ruby port that's
+# available as a gem.
+#
 # * If you're writing shell scripts, try
 # [Shocco](http://rtomayko.github.com/shocco/), a port for the **POSIX shell**,
 # also by Mr. Tomayko.
-# 
-# * If Python's more your speed, take a look at 
-# [Nick Fitzgerald](http://github.com/fitzgen)'s [Pycco](http://fitzgen.github.com/pycco/). 
 #
-# * For **Clojure** fans, [Fogus](http://blog.fogus.me/)'s 
-# [Marginalia](http://fogus.me/fun/marginalia/) is a bit of a departure from 
+# * If Python's more your speed, take a look at
+# [Nick Fitzgerald](http://github.com/fitzgen)'s
+# [Pycco](http://fitzgen.github.com/pycco/).
+#
+# * For **Clojure** fans, [Fogus](http://blog.fogus.me/)'s
+# [Marginalia](http://fogus.me/fun/marginalia/) is a bit of a departure from
 # "quick-and-dirty", but it'll get the job done.
 #
-# * **Lua** enthusiasts can get their fix with 
-# [Robert Gieseke](https://github.com/rgieseke)'s [Locco](http://rgieseke.github.com/locco/).
-# 
+# * **Lua** enthusiasts can get their fix with
+# [Robert Gieseke](https://github.com/rgieseke)'s
+# [Locco](http://rgieseke.github.com/locco/).
+#
 # * And if you happen to be a **.NET**
-# aficionado, check out [Don Wilson](https://github.com/dontangg)'s 
+# aficionado, check out [Don Wilson](https://github.com/dontangg)'s
 # [Nocco](http://dontangg.github.com/nocco/).
 
 #### Main Documentation Generation Functions
@@ -134,17 +137,17 @@ highlight = (source, sections, callback) ->
   language = get_language source
   pygments = spawn 'pygmentize', ['-l', language.name, '-f', 'html', '-O', 'encoding=utf-8,tabsize=2']
   output   = ''
-  
+
   pygments.stderr.addListener 'data',  (error)  ->
     console.error error.toString() if error
-    
+
   pygments.stdin.addListener 'error',  (error)  ->
     console.error "Could not use Pygments to highlight the source."
     process.exit 1
-    
+
   pygments.stdout.addListener 'data', (result) ->
     output += result if result
-    
+
   pygments.addListener 'exit', ->
     output = output.replace(highlight_start, '').replace(highlight_end, '')
     fragments = output.split language.divider_html
@@ -152,11 +155,11 @@ highlight = (source, sections, callback) ->
       section.code_html = highlight_start + fragments[i] + highlight_end
       section.docs_html = showdown.makeHtml section.docs_text
     callback()
-    
+
   if pygments.stdin.writable
     pygments.stdin.write((section.code_text for section in sections).join(language.divider_text))
     pygments.stdin.end()
-  
+
 # Once all of the code is finished highlighting, we can generate the HTML file
 # and write out the documentation. Pass the completed sections into the template
 # found in `resources/docco.jst`
@@ -181,49 +184,49 @@ generate_readme = (context, sources, package_json) ->
   content_index_path = "#{process.cwd()}/#{context.config.content_dir}/content_index.md"
   console.log content_index_path
   # generate the content index if it exists under the content sources
-  if file_exists(content_index_path) 
+  if file_exists(content_index_path)
     content_index = parse_markdown context, content_index_path
   else
-    content_index = ""  
- 
-  # parse the markdown the the readme 
+    content_index = ""
+
+  # parse the markdown the the readme
   if file_exists(readme_path)
     content = parse_markdown(context, readme_path)
   else
     content = "There is no #{source} for this project yet :( "
-  
-  # run cloc 
+
+  # run cloc
   cloc sources.join(" "), (code_stats) ->
 
     html = readme_template {
-      title: title, 
-      context: context, 
-      content: content, 
+      title: title,
+      context: context,
+      content: content,
       content_index: content_index,
-      file_path: source, 
-      path: path, 
-      relative_base: relative_base, 
-      package_json: package_json, 
-      code_stats: code_stats, 
+      file_path: source,
+      path: path,
+      relative_base: relative_base,
+      package_json: package_json,
+      code_stats: code_stats,
       gravatar: gravatar
     }
-    
+
     console.log "docco: #{source} -> #{dest}"
     write_file(dest, html)
 
 generate_content = (context, dir) ->
-  walker = walk.walk(dir, { followLinks: false });    
+  walker = walk.walk(dir, { followLinks: false });
   walker.on 'file', (root, fileStats, next) ->
     # only match files that end in *.md
     if fileStats.name.match(new RegExp ".md$")
-      src = "#{root}/#{fileStats.name}" 
+      src = "#{root}/#{fileStats.name}"
       dest  = destination(src.replace(context.config.content_dir, ""), context)
       console.log "markdown: #{src} --> #{dest}"
       html = parse_markdown context, src
       html = content_template {
         title: fileStats.name, context: context, content: html, file_path: fileStats.name, path: path, relative_base: relative_base
       }
-      write_file dest, html  
+      write_file dest, html
     next()
 
 # Write a file to the filesystem
@@ -244,7 +247,7 @@ write_file = (dest, contents) ->
           write_func()
 
 
-# Parse a markdown file and return the HTML 
+# Parse a markdown file and return the HTML
 parse_markdown = (context, src) ->
   markdown = fs.readFileSync(src).toString()
   return showdown.makeHtml markdown
@@ -319,7 +322,7 @@ get_language = (source) -> languages[path.extname(source)]
 
 # Compute the path of a source file relative to the docs folder
 relative_base = (filepath, context) ->
-  result = path.dirname(filepath) + '/' 
+  result = path.dirname(filepath) + '/'
   if result == '/' or result == '//' then '' else result
 
 # Compute the destination HTML path for an input source file path. If the source
@@ -333,7 +336,7 @@ ensure_directory = (dir, callback) ->
   exec "mkdir -p #{dir}", -> callback()
 
 file_exists = (path) ->
-  try 
+  try
     return fs.lstatSync(path).isFile
   catch ex
     return false
@@ -377,9 +380,9 @@ parse_args = (callback) ->
   # command
   roots = (a.replace(/\/+$/, '') for a in args)
   roots = roots.join(" ")
-    
+
   # Only include files that we know how to handle
-  lang_filter = for ext of languages 
+  lang_filter = for ext of languages
     " -name '*#{ext}' "
   lang_filter = lang_filter.join ' -o '
 
@@ -395,13 +398,13 @@ parse_args = (callback) ->
 
     callback(sources, project_name, args)
 
-check_config = (context,pkg)->
+check_config = (context, pkg)->
   defaults = {
     # the primary CSS file to load
     css: (__dirname + '/../resources/docco.css')
 
     # show the timestamp on generated docs
-    show_timestamp: true,
+    show_timestamp: false,
 
     # output directory for generated docs
     output_dir: "docs",
@@ -419,7 +422,7 @@ parse_args (sources, project_name, raw_paths) ->
   # Rather than relying on globals, let's pass around a context w/ misc info
   # that we require down the line.
   context = sources: sources, options: { project_name: project_name }
-  
+
   package_path = process.cwd() + '/package.json'
   try
     package_json = if file_exists(package_path) then JSON.parse(fs.readFileSync(package_path).toString()) else {}

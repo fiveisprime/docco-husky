@@ -31,11 +31,11 @@
   },
   "dependencies": {
     "coffee-script": "latest",
-    "dox": "0.1.2",
+    "dox": "~0.4.4",
     "jade": "0.17.0",
     "gravatar": "1.0.3",
     "underscore": "1.2.x",
-    "walk": "2.0.2"
+    "walk": "~2.2.1"
   },
   "directories": {
     "lib": "./lib"
